@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Navbar as BSNavbar, Nav, Container, Button } from "react-bootstrap";
 
 export default function Navbar() {
   const token = localStorage.getItem("token");
@@ -9,20 +10,50 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar">
-      <Link to="/">Home</Link>
-      <Link to="/rentals">Rental Search</Link>
+    <BSNavbar bg="dark" data-bs-theme="dark" expand="lg">
+      <Container>
+        <BSNavbar.Brand as={Link} to="/">
+          Rental App
+        </BSNavbar.Brand>
 
-      {token && <Link to="/rated">Rated Rentals</Link>}
+        <BSNavbar.Toggle aria-controls="main-navbar" />
 
-      {!token ? (
-        <>
-          <Link to="/register">Register</Link>
-          <Link to="/login">Login</Link>
-        </>
-      ) : (
-        <button onClick={handleLogout}>Log Out</button>
-      )}
-    </nav>
+        <BSNavbar.Collapse id="main-navbar">
+          <Nav className="me-auto">
+            <Nav.Link as={Link} to="/">
+              Home
+            </Nav.Link>
+
+            <Nav.Link as={Link} to="/rentals">
+              Rental Search
+            </Nav.Link>
+
+            {token && (
+              <Nav.Link as={Link} to="/rated">
+                Rated Rentals
+              </Nav.Link>
+            )}
+          </Nav>
+
+          <Nav>
+            {!token ? (
+              <>
+                <Nav.Link as={Link} to="/register">
+                  Register
+                </Nav.Link>
+
+                <Nav.Link as={Link} to="/login">
+                  Login
+                </Nav.Link>
+              </>
+            ) : (
+              <Button variant="outline-light" size="sm" onClick={handleLogout}>
+                Log Out
+              </Button>
+            )}
+          </Nav>
+        </BSNavbar.Collapse>
+      </Container>
+    </BSNavbar>
   );
 }
