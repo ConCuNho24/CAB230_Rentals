@@ -30,8 +30,15 @@ export default function RentalSearch() {
     state: "",
     propertyType: "",
     postcode: "",
+    suburb: "",
+    minimumRent: "",
+    maximumRent: "",
     minimumBedrooms: "",
     minimumBathrooms: "",
+    minimumParking: "",
+    minimumRating: "",
+    sortBy: "",
+    sortOrder: "",
   });
 
   const [page, setPage] = useState(1);
@@ -65,9 +72,16 @@ export default function RentalSearch() {
         page: pageNumber,
         state: filters.state,
         postcode: filters.postcode,
+        suburb: filters.suburb,
         propertyTypes: filters.propertyType,
+        minimumRent: filters.minimumRent,
+        maximumRent: filters.maximumRent,
         minimumBedrooms: filters.minimumBedrooms,
         minimumBathrooms: filters.minimumBathrooms,
+        minimumParking: filters.minimumParking,
+        minimumRating: filters.minimumRating,
+        sortBy: filters.sortBy,
+        sortOrder: filters.sortOrder,
       });
 
       setRentals(data.data || []);
@@ -95,9 +109,17 @@ export default function RentalSearch() {
       state: "",
       propertyType: "",
       postcode: "",
+      suburb: "",
+      minimumRent: "",
+      maximumRent: "",
       minimumBedrooms: "",
       minimumBathrooms: "",
+      minimumParking: "",
+      minimumRating: "",
+      sortBy: "",
+      sortOrder: "",
     });
+
     setPage(1);
     loadRentals(1);
   }
@@ -147,6 +169,97 @@ export default function RentalSearch() {
                   value={filters.postcode}
                   onChange={handleChange}
                 />
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Suburb</Form.Label>
+                <Form.Control
+                  name="suburb"
+                  value={filters.suburb}
+                  onChange={handleChange}
+                  placeholder="e.g. Brisbane"
+                />
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Min Rent</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="minimumRent"
+                  value={filters.minimumRent}
+                  onChange={handleChange}
+                  min="0"
+                />
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Max Rent</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="maximumRent"
+                  value={filters.maximumRent}
+                  onChange={handleChange}
+                  min="0"
+                />
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Min Parking</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="minimumParking"
+                  value={filters.minimumParking}
+                  onChange={handleChange}
+                  min="0"
+                />
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Min Rating</Form.Label>
+                <Form.Select
+                  name="minimumRating"
+                  value={filters.minimumRating}
+                  onChange={handleChange}
+                >
+                  <option value="">Any</option>
+                  <option value="1">1+</option>
+                  <option value="2">2+</option>
+                  <option value="3">3+</option>
+                  <option value="4">4+</option>
+                  <option value="5">5</option>
+                </Form.Select>
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Sort By</Form.Label>
+                <Form.Select
+                  name="sortBy"
+                  value={filters.sortBy}
+                  onChange={handleChange}
+                >
+                  <option value="">Default</option>
+                  <option value="rent">Rent</option>
+                  <option value="bedrooms">Bedrooms</option>
+                  <option value="bathrooms">Bathrooms</option>
+                  <option value="parkingSpaces">Parking</option>
+                  <option value="averageRating">Rating</option>
+                  <option value="title">Title</option>
+                  <option value="suburb">Suburb</option>
+                </Form.Select>
+              </Col>
+
+              <Col md={2}>
+                <Form.Label>Sort Order</Form.Label>
+                <Form.Select
+                  name="sortOrder"
+                  value={filters.sortOrder}
+                  onChange={handleChange}
+                  disabled={!filters.sortBy}
+                >
+                  <option value="">Default</option>
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+                </Form.Select>
               </Col>
 
               <Col md={2}>
