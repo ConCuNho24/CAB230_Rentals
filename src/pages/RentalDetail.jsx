@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Map, Marker } from "pigeon-maps";
+
 import {
+  Alert,
   Badge,
   Button,
   Card,
   Container,
+  Form,
   ListGroup,
   Row,
   Col,
 } from "react-bootstrap";
 
 import { getRentalById } from "../api/rentalsApi";
+import { getMyRatingForRental, rateRental } from "../api/ratingsApi";
 
 export default function RentalDetail() {
   const { id } = useParams();
@@ -19,6 +23,12 @@ export default function RentalDetail() {
   const [rental, setRental] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [myRating, setMyRating] = useState("");
+  const [ratingMessage, setRatingMessage] = useState("");
+  const [ratingError, setRatingError] = useState("");
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     async function loadRental() {
@@ -37,6 +47,42 @@ export default function RentalDetail() {
 
     loadRental();
   }, [id]);
+
+  useEffect(() => {
+    async function loadMyRating() {
+      if (!token) return;
+
+      try {
+        const data = await getMyRatingForRental(id);
+
+        if (data.rating) {
+          setMyRating(String(data.rating));
+        }
+      } catch {
+        // Nếu user chưa từng rating property này thì bỏ qua.
+      }
+    }
+
+    loadMyRating();
+  }, [id, token]);
+
+  async function handleSubmitRating(event) {
+    event.preventDefault();
+
+    try {
+      setRatingError("");
+      setRatingMessage("");
+
+      await rateRental(id, Number(myRating));
+
+      setRatingMessage("Rating submitted successfully.");
+
+      const updatedRental = await getRentalById(id);
+      setRental(updatedRental);
+    } catch (err) {
+      setRatingError(err.message);
+    }
+  }
 
   if (loading) return <p>Loading rental details...</p>;
   if (error) return <p className="text-danger fw-bold">{error}</p>;
@@ -66,7 +112,8 @@ export default function RentalDetail() {
             <Col md={6}>
               <ListGroup variant="flush">
                 <ListGroup.Item>
-                  <strong>Weekly Rent:</strong> ${rental.rent}
+                  <strong>Weekly Rent:</strong> $
+                  {rental.rent?.toLocaleString()}
                 </ListGroup.Item>
 
                 <ListGroup.Item>
@@ -98,7 +145,7 @@ export default function RentalDetail() {
                 </ListGroup.Item>
 
                 <ListGroup.Item>
-                  <strong>Rating:</strong>{" "}
+                  <strong>Average Rating:</strong>{" "}
                   {rental.averageRating
                     ? `${rental.averageRating} stars (${rental.numRatings})`
                     : "No ratings yet"}
@@ -106,6 +153,43 @@ export default function RentalDetail() {
               </ListGroup>
             </Col>
           </Row>
+
+          <h2 className="mt-4">Your Rating</h2>
+
+          {!token ? (
+            <Alert variant="warning">
+              Please log in to rate this rental.
+            </Alert>
+          ) : (
+            <Form onSubmit={handleSubmitRating} className="mb-3">
+              <Row className="g-3 align-items-end">
+                <Col md={4}>
+                  <Form.Label>Select rating</Form.Label>
+                  <Form.Select
+                    value={myRating}
+                    onChange={(e) => setMyRating(e.target.value)}
+                    required
+                  >
+                    <option value="">Select rating</option>
+                    <option value="1">1 star</option>
+                    <option value="2">2 stars</option>
+                    <option value="3">3 stars</option>
+                    <option value="4">4 stars</option>
+                    <option value="5">5 stars</option>
+                  </Form.Select>
+                </Col>
+
+                <Col md={3}>
+                  <Button type="submit" disabled={!myRating}>
+                    Submit Rating
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+
+          {ratingMessage && <Alert variant="success">{ratingMessage}</Alert>}
+          {ratingError && <Alert variant="danger">{ratingError}</Alert>}
 
           <h2 className="mt-4">Description</h2>
 
