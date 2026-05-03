@@ -1,6 +1,7 @@
 import { Button, Dropdown, Form } from "react-bootstrap";
 
 import { formatPropertyType } from "../../utils/formatters";
+import "./PropertyTypesDropdown.css";
 
 const getPropertyTypeLabel = (selectedPropertyTypes) => {
   if (selectedPropertyTypes.length === 0) return "Any";

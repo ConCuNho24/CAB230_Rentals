@@ -1,5 +1,7 @@
 import { Button, Pagination } from "react-bootstrap";
 
+import "./PaginationControls.css";
+
 const PaginationControls = ({
   currentPage = 1,
   isLoading = false,

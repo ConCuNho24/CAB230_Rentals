@@ -1,4 +1,6 @@
-import { Alert, Button, Card, Table } from "react-bootstrap";
+import { Fragment, useEffect, useRef } from "react";
+
+import { Alert, Card, Table } from "react-bootstrap";
 
 import { LoadingMessage } from "../../components/StatusMessage";
 import {
@@ -6,6 +8,8 @@ import {
   formatPropertyType,
   formatRating,
 } from "../../utils/formatters";
+import { PAGE_SIZE } from "./searchHelpers";
+import "./RentalSearchResults.css";
 
 const RentalSearchResults = ({
   errorMessage,
@@ -15,7 +19,26 @@ const RentalSearchResults = ({
   pagination,
   rentals,
 }) => {
+  const loadMoreRef = useRef(null);
   const hasNextPage = Boolean(pagination.nextPage);
+
+  useEffect(() => {
+    const loadMoreElement = loadMoreRef.current;
+
+    if (!loadMoreElement || !hasNextPage) return undefined;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !isLoading) {
+        onLoadMore();
+      }
+    });
+
+    observer.observe(loadMoreElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasNextPage, isLoading, onLoadMore]);
 
   return (
     <Card className="app-card">
@@ -23,12 +46,10 @@ const RentalSearchResults = ({
         <div className="results-toolbar">
           <div>
             <h2 className="section-title">Results</h2>
-            <p className="muted-text">
-              Page {pagination.currentPage || 1} of {pagination.lastPage || 1} -
-              showing {rentals.length} of {pagination.total || 0} rentals
-            </p>
           </div>
-          {isLoading && <LoadingMessage message="Loading rentals..." />}
+          {isLoading && rentals.length === 0 && (
+            <LoadingMessage message="Loading rentals..." />
+          )}
         </div>
 
         {pagination.total === 0 && !isLoading && !errorMessage && (
@@ -53,33 +74,48 @@ const RentalSearchResults = ({
                 </tr>
               </thead>
               <tbody>
-                {rentals.map((rental) => (
-                  <tr key={rental.id} onClick={() => onSelectRental(rental)}>
-                    <td className="rental-title-column">{rental.title}</td>
-                    <td>{formatMoney(rental.rent)}</td>
-                    <td>{formatPropertyType(rental.propertyType)}</td>
-                    <td>{rental.suburb}</td>
-                    <td>{rental.state}</td>
-                    <td>{rental.postcode}</td>
-                    <td>{rental.bedrooms}</td>
-                    <td>{rental.bathrooms}</td>
-                    <td>{rental.parkingSpaces}</td>
-                    <td>{formatRating(rental.averageRating, rental.numRatings)}</td>
-                  </tr>
-                ))}
+                {rentals.map((rental, index) => {
+                  const pageNumber = Math.floor(index / PAGE_SIZE) + 1;
+                  const firstResultNumber = index + 1;
+                  const lastResultNumber = Math.min(
+                    pageNumber * PAGE_SIZE,
+                    pagination.total || rentals.length,
+                  );
+                  const showDivider = index > 0 && index % PAGE_SIZE === 0;
+
+                  return (
+                    <Fragment key={rental.id}>
+                      {showDivider && (
+                        <tr className="results-divider-row">
+                          <td colSpan="10">
+                            <span>
+                              Results {firstResultNumber} to {lastResultNumber}
+                            </span>
+                          </td>
+                        </tr>
+                      )}
+
+                      <tr onClick={() => onSelectRental(rental)}>
+                        <td className="rental-title-column">{rental.title}</td>
+                        <td>{formatMoney(rental.rent)}</td>
+                        <td>{formatPropertyType(rental.propertyType)}</td>
+                        <td>{rental.suburb}</td>
+                        <td>{rental.state}</td>
+                        <td>{rental.postcode}</td>
+                        <td>{rental.bedrooms}</td>
+                        <td>{rental.bathrooms}</td>
+                        <td>{rental.parkingSpaces}</td>
+                        <td>{formatRating(rental.averageRating, rental.numRatings)}</td>
+                      </tr>
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </Table>
 
-            <div className="load-more-bar">
+            <div ref={loadMoreRef} className="load-more-bar">
               {hasNextPage ? (
-                <Button
-                  type="button"
-                  variant="outline-primary"
-                  disabled={isLoading}
-                  onClick={onLoadMore}
-                >
-                  {isLoading ? "Loading..." : "Load More Results"}
-                </Button>
+                <span>{isLoading ? "Loading More Results ..." : ""}</span>
               ) : (
                 <span>End of results</span>
               )}

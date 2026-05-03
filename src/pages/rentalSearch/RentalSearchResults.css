@@ -1,0 +1,121 @@
+.results-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.rentals-table {
+  width: 100%;
+  table-layout: fixed;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.rentals-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #151814;
+  color: #f5e6bf;
+  font-weight: 650;
+  font-size: 14px;
+  border-color: #151814;
+  box-shadow: 0 2px 0 rgba(21, 24, 20, 0.35);
+}
+
+.rentals-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.rentals-table tbody tr:hover,
+.rentals-table tbody tr:hover td {
+  background: #d9f3f6;
+}
+
+.rentals-table tbody tr:nth-child(odd) td {
+  background: #e9d8bc;
+}
+
+.rentals-table tbody tr:nth-child(even) td {
+  background: #dfccb0;
+}
+
+.rentals-table tbody td {
+  color: #111812;
+}
+
+.rentals-table th,
+.rentals-table td {
+  padding: 10px 8px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border-color: #d4c3a9;
+}
+
+.rentals-table .rental-title-column {
+  width: 28%;
+  font-weight: 650;
+}
+
+.rentals-table tbody .results-divider-row {
+  cursor: default;
+  --bs-table-bg: #f6f8f1;
+  --bs-table-accent-bg: #f6f8f1;
+  --bs-table-hover-bg: #f6f8f1;
+  --bs-table-hover-color: #5a5144;
+}
+
+.rentals-table tbody .results-divider-row td,
+.rentals-table tbody .results-divider-row:hover td {
+  background: #f6f8f1;
+  background-color: #f6f8f1 !important;
+  color: #5a5144;
+  padding: 28px 12px;
+  border-color: #f6f8f1;
+  font-size: 13px;
+  font-weight: 750;
+  text-align: center;
+}
+
+.rentals-table tbody .results-divider-row span {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rentals-table tbody .results-divider-row span::before,
+.rentals-table tbody .results-divider-row span::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid #c9b89b;
+}
+
+.load-more-bar {
+  display: flex;
+  justify-content: center;
+  min-height: 34px;
+  margin-top: 20px;
+  color: #5a5144;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+@media (max-width: 991px) {
+  .results-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 575px) {
+  .rentals-table {
+    font-size: 12px;
+  }
+
+  .rentals-table th,
+  .rentals-table td {
+    padding: 8px 5px;
+  }
+}

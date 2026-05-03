@@ -1,0 +1,103 @@
+.property-filter-toggle {
+  width: 100%;
+  height: 38px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  padding: 6px 36px 6px 12px;
+  color: #1e261f;
+  background: #f8efe0;
+  border-color: #c9b89b;
+  font-weight: 600;
+  text-align: left;
+}
+
+.property-filter-toggle::after {
+  position: absolute;
+  right: 14px;
+  margin-left: 0;
+}
+
+.search-panel .property-filter-toggle.btn-outline-secondary,
+.search-panel .property-filter-toggle.btn-outline-secondary:hover,
+.search-panel .property-filter-toggle.btn-outline-secondary:active,
+.search-panel .property-filter-toggle.btn-outline-secondary.show {
+  color: #1e261f;
+  background: #f8efe0;
+  border-color: #c9b89b;
+}
+
+.search-panel .property-filter-toggle.btn-outline-secondary:focus {
+  color: #1e261f;
+  background: #fff8ea;
+  border-color: #0aaec4;
+  box-shadow: 0 0 0 4px rgba(10, 174, 196, 0.14);
+}
+
+.property-filter-menu {
+  --bs-dropdown-bg: #f8efe0;
+  --bs-dropdown-border-color: #c9b89b;
+  --bs-dropdown-link-hover-bg: #d9f3f6;
+  --bs-dropdown-link-active-bg: #d9f3f6;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #f8efe0;
+  background-color: #f8efe0 !important;
+  border-color: #c9b89b;
+  box-shadow: 0 12px 24px rgba(23, 32, 51, 0.12);
+}
+
+.property-filter-menu.show {
+  background: #f8efe0;
+  background-color: #f8efe0 !important;
+}
+
+.property-filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.property-filter-actions .btn-link {
+  color: #17383d;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.property-filter-actions .btn-link:hover,
+.property-filter-actions .btn-link:focus {
+  color: #0aaec4;
+  text-decoration: underline;
+}
+
+.property-filter-check {
+  padding: 6px 8px 6px 28px;
+  border-radius: 6px;
+  background: transparent;
+  color: #1e261f;
+  font-weight: 550;
+}
+
+.property-filter-check:hover {
+  background: #d9f3f6;
+}
+
+.property-filter-check .form-check-input {
+  background-color: #fff8ea;
+  border-color: #c9b89b;
+}
+
+.property-filter-check .form-check-input:checked {
+  background-color: #0aaec4;
+  border-color: #0aaec4;
+}
+
+.property-filter-check .form-check-input:focus {
+  border-color: #0aaec4;
+  box-shadow: 0 0 0 4px rgba(10, 174, 196, 0.14);
+}
