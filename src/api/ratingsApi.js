@@ -1,36 +1,13 @@
-const API_BASE_URL = "http://4.237.58.241:3000";
+import { apiRequest } from "./client";
 
-function getAuthHeaders() {
-  const token = localStorage.getItem("token");
+export const getMyRatings = (page = 1) =>
+  apiRequest("/ratings", { query: { page } });
 
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-}
+export const getMyRatingForRental = (id) =>
+  apiRequest(`/ratings/rentals/${id}`);
 
-export async function getMyRatingForRental(id) {
-  const response = await fetch(`${API_BASE_URL}/ratings/rentals/${id}`, {
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch your rating");
-  }
-
-  return response.json();
-}
-
-export async function rateRental(id, rating) {
-  const response = await fetch(`${API_BASE_URL}/ratings/rentals/${id}`, {
+export const rateRental = (id, rating) =>
+  apiRequest(`/ratings/rentals/${id}`, {
     method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ rating }),
+    body: { rating },
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to submit rating");
-  }
-
-  return response.json();
-}

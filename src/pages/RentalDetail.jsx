@@ -1,216 +1,204 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Map, Marker } from "pigeon-maps";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import {
   Alert,
   Badge,
   Button,
   Card,
-  Container,
-  Form,
-  ListGroup,
-  Row,
   Col,
+  Container,
+  Row,
 } from "react-bootstrap";
 
-import { getRentalById } from "../api/rentalsApi";
+import { getRentalById, searchRentals } from "../api/rentalsApi";
 import { getMyRatingForRental, rateRental } from "../api/ratingsApi";
+import RentalMap from "../components/RentalMap";
+import { ErrorMessage, LoadingMessage } from "../components/StatusMessage";
+import { useAuth } from "../context/authStore";
+import PropertyDetailsCard from "./rentalDetail/PropertyDetailsCard";
+import RatingCard from "./rentalDetail/RatingCard";
+import RentalOverview from "./rentalDetail/RentalOverview";
+import "./RentalDetail.css";
 
-export default function RentalDetail() {
+const RentalDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [rental, setRental] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
+  const [nearbyRentals, setNearbyRentals] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [myRating, setMyRating] = useState("");
   const [ratingMessage, setRatingMessage] = useState("");
   const [ratingError, setRatingError] = useState("");
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const rentalId = Number(id);
+
+  const rentalForMap = rental ? { ...rental, id: rentalId } : null;
+  const mapRentals = rentalForMap
+    ? [rentalForMap, ...nearbyRentals.filter((item) => item.id !== rentalId)].slice(
+        0,
+        10,
+      )
+    : nearbyRentals.slice(0, 10);
 
   useEffect(() => {
-    async function loadRental() {
+    const loadRental = async () => {
       try {
-        setLoading(true);
-        setError("");
+        setIsLoading(true);
+        setErrorMessage("");
 
-        const data = await getRentalById(id);
-        setRental(data);
+        const rentalData = await getRentalById(rentalId);
+        setRental(rentalData);
+
+        // Nearby rentals give the detail map useful local context.
+        const nearbyData = await searchRentals({
+          postcode: rentalData.postcode,
+          page: 1,
+        });
+        setNearbyRentals(nearbyData.data || []);
       } catch (err) {
-        setError(err.message);
+        setErrorMessage(err.message);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
-    }
+    };
 
     loadRental();
-  }, [id]);
+  }, [rentalId]);
 
   useEffect(() => {
-    async function loadMyRating() {
-      if (!token) return;
+    const loadMyRating = async () => {
+      if (!isAuthenticated) {
+        setMyRating("");
+        return;
+      }
 
       try {
-        const data = await getMyRatingForRental(id);
-
-        if (data.rating) {
-          setMyRating(String(data.rating));
+        const data = await getMyRatingForRental(rentalId);
+        setMyRating(String(data.rating));
+      } catch (err) {
+        if (err.status === 404) {
+          // A 404 here only means the logged-in user has not rated this rental yet.
+          setMyRating("");
+          return;
         }
-      } catch {
-        // Nếu user chưa từng rating property này thì bỏ qua.
+
+        setRatingError(err.message);
       }
-    }
+    };
 
     loadMyRating();
-  }, [id, token]);
+  }, [isAuthenticated, rentalId]);
 
-  async function handleSubmitRating(event) {
+  const handleSubmitRating = async (event) => {
     event.preventDefault();
 
     try {
+      setIsSubmittingRating(true);
       setRatingError("");
       setRatingMessage("");
 
-      await rateRental(id, Number(myRating));
-
+      await rateRental(rentalId, Number(myRating));
       setRatingMessage("Rating submitted successfully.");
 
-      const updatedRental = await getRentalById(id);
+      // Reload the rental so the average rating and count are current.
+      const updatedRental = await getRentalById(rentalId);
       setRental(updatedRental);
     } catch (err) {
       setRatingError(err.message);
+    } finally {
+      setIsSubmittingRating(false);
     }
+  };
+
+  if (isLoading) {
+    return (
+      <Container className="page-shell">
+        <LoadingMessage message="Loading rental details..." />
+      </Container>
+    );
   }
 
-  if (loading) return <p>Loading rental details...</p>;
-  if (error) return <p className="text-danger fw-bold">{error}</p>;
-  if (!rental) return <p>No rental found.</p>;
+  if (errorMessage) {
+    return (
+      <Container className="page-shell">
+        <ErrorMessage message={errorMessage} />
+        <Button as={Link} to="/rentals" variant="outline-primary">
+          Back to Search
+        </Button>
+      </Container>
+    );
+  }
+
+  if (!rental) {
+    return (
+      <Container className="page-shell">
+        <Alert variant="info">No rental found.</Alert>
+      </Container>
+    );
+  }
 
   return (
-    <Container className="mt-4">
-      <Button as={Link} to="/rentals" variant="outline-primary" size="sm">
-        ← Back to Rental Search
-      </Button>
+    <Container className="page-shell">
+      <div className="detail-toolbar">
+        <Button as={Link} to="/rentals" variant="outline-primary" size="sm">
+          &larr; Back to Search
+        </Button>
+      </div>
 
-      <Card className="mt-3 shadow-sm">
-        <Card.Body>
-          <Card.Title as="h1">{rental.title}</Card.Title>
+      <Row className="g-4">
+        <Col lg={7}>
+          <RentalOverview rental={rental} />
+        </Col>
 
-          <div className="mb-3">
-            <Badge bg="secondary" className="me-2">
-              {rental.propertyType}
-            </Badge>
+        <Col lg={5}>
+          <PropertyDetailsCard rental={rental} />
 
-            <Badge bg="info">
-              {rental.suburb}, {rental.state}
-            </Badge>
-          </div>
-
-          <Row>
-            <Col md={6}>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <strong>Weekly Rent:</strong> $
-                  {rental.rent?.toLocaleString()}
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <strong>Address:</strong> {rental.streetAddress}
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <strong>Postcode:</strong> {rental.postcode}
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <strong>Agency:</strong> {rental.agencyName}
-                </ListGroup.Item>
-              </ListGroup>
-            </Col>
-
-            <Col md={6}>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <strong>Bedrooms:</strong> {rental.bedrooms}
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <strong>Bathrooms:</strong> {rental.bathrooms}
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <strong>Parking Spaces:</strong> {rental.parkingSpaces}
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <strong>Average Rating:</strong>{" "}
-                  {rental.averageRating
-                    ? `${rental.averageRating} stars (${rental.numRatings})`
-                    : "No ratings yet"}
-                </ListGroup.Item>
-              </ListGroup>
-            </Col>
-          </Row>
-
-          <h2 className="mt-4">Your Rating</h2>
-
-          {!token ? (
-            <Alert variant="warning">
-              Please log in to rate this rental.
-            </Alert>
-          ) : (
-            <Form onSubmit={handleSubmitRating} className="mb-3">
-              <Row className="g-3 align-items-end">
-                <Col md={4}>
-                  <Form.Label>Select rating</Form.Label>
-                  <Form.Select
-                    value={myRating}
-                    onChange={(e) => setMyRating(e.target.value)}
-                    required
-                  >
-                    <option value="">Select rating</option>
-                    <option value="1">1 star</option>
-                    <option value="2">2 stars</option>
-                    <option value="3">3 stars</option>
-                    <option value="4">4 stars</option>
-                    <option value="5">5 stars</option>
-                  </Form.Select>
-                </Col>
-
-                <Col md={3}>
-                  <Button type="submit" disabled={!myRating}>
-                    Submit Rating
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          )}
-
-          {ratingMessage && <Alert variant="success">{ratingMessage}</Alert>}
-          {ratingError && <Alert variant="danger">{ratingError}</Alert>}
-
-          <h2 className="mt-4">Description</h2>
-
-          <div
-            className="description"
-            dangerouslySetInnerHTML={{ __html: rental.description }}
+          <RatingCard
+            error={ratingError}
+            isAuthenticated={isAuthenticated}
+            isSubmitting={isSubmittingRating}
+            message={ratingMessage}
+            onRatingChange={setMyRating}
+            onSubmit={handleSubmitRating}
+            rating={myRating}
+            rentalId={rentalId}
           />
+        </Col>
+      </Row>
 
-          <h2 className="mt-4">Location Map</h2>
-
-          <div className="map-container">
-            <Map
-              height={400}
-              defaultCenter={[rental.latitude, rental.longitude]}
-              defaultZoom={14}
-            >
-              <Marker width={40} anchor={[rental.latitude, rental.longitude]} />
-            </Map>
+      <Card className="app-card mt-4">
+        <Card.Body>
+          <div className="section-heading-row">
+            <div>
+              <h2 className="section-title">Location</h2>
+              <p className="muted-text">
+                This map includes the selected rental and nearby rentals in the
+                same postcode when available.
+              </p>
+            </div>
+            <Badge bg="light" text="dark">
+              {mapRentals.length} markers
+            </Badge>
           </div>
+
+          <RentalMap
+            activeRentalId={rentalId}
+            rentals={mapRentals}
+            zoom={13}
+            height={420}
+            onSelectRental={(selectedRental) =>
+              navigate(`/rentals/${selectedRental.id}`)
+            }
+          />
         </Card.Body>
       </Card>
     </Container>
   );
-}
+};
+
+export default RentalDetail;

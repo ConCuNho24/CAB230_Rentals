@@ -1,0 +1,105 @@
+.detail-toolbar {
+  margin-bottom: 16px;
+}
+
+.detail-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.detail-heading h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.detail-heading p {
+  color: var(--app-muted);
+  margin-bottom: 0;
+}
+
+.metric-row {
+  margin: 12px 0 18px;
+}
+
+.metric-box {
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: #efe2cc;
+}
+
+.metric-box span {
+  color: var(--app-muted);
+  font-size: 14px;
+}
+
+.metric-box strong {
+  font-size: 20px;
+}
+
+.description {
+  line-height: 1.7;
+  background: #efe2cc;
+  padding: 18px;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+}
+
+.description p:last-child {
+  margin-bottom: 0;
+}
+
+.detail-list {
+  overflow: hidden;
+  background: #efe2cc;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+}
+
+.detail-list .list-group-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 18px;
+  background: #efe2cc;
+  border-color: var(--app-border);
+}
+
+.detail-list span {
+  text-align: right;
+  color: var(--app-muted);
+}
+
+.rating-buttons {
+  width: 100%;
+}
+
+.rating-buttons .btn {
+  flex: 1;
+}
+
+@media (max-width: 991px) {
+  .detail-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 575px) {
+  .detail-list .list-group-item {
+    display: block;
+  }
+
+  .detail-list span {
+    display: block;
+    text-align: left;
+    margin-top: 4px;
+  }
+}

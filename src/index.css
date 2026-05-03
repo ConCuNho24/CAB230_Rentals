@@ -1,43 +1,30 @@
-/* ===== Global ===== */
+:root {
+  --app-bg: #f3ead8;
+  --app-surface: #f3e7d3;
+  --app-border: #cbbba1;
+  --app-text: #1e261f;
+  --app-muted: #4f473b;
+  --app-primary: #0aaec4;
+  --app-success: #0f766e;
+  --app-warning: #b45309;
+  --app-shadow: 0 10px 28px rgba(23, 32, 51, 0.08);
+}
+
 body {
   margin: 0;
-  font-family: "Inter", Arial, Helvetica, sans-serif;
-  background: #f4f6f8;
-  color: #1e293b;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(240, 64, 48, 0.12), transparent 28rem),
+    radial-gradient(circle at top right, rgba(0, 176, 208, 0.15), transparent 30rem),
+    linear-gradient(180deg, #f8f0df 0%, #eef1e7 48%, #e8dfcf 100%);
+  background-attachment: fixed;
+  color: var(--app-text);
 }
 
-/* Không override bootstrap container */
-.app-container {
-  padding: 32px;
+a {
+  color: var(--app-primary);
 }
 
-/* ===== Navbar ===== */
-.navbar {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  padding: 16px 32px;
-  background: #1f2933;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.navbar a,
-.navbar button {
-  color: white;
-  text-decoration: none;
-  font-size: 15px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.navbar a:hover,
-.navbar button:hover {
-  color: #93c5fd;
-}
-
-/* ===== Page Layout ===== */
 .page-shell {
   max-width: 1280px;
   margin: 0 auto;
@@ -47,130 +34,66 @@ body {
   margin-bottom: 24px;
 }
 
+.page-hero.compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
 .page-title {
-  font-size: 40px;
+  font-size: 38px;
   font-weight: 800;
   margin-bottom: 6px;
 }
 
-.page-subtitle {
-  color: #64748b;
+.page-subtitle,
+.muted-text {
+  color: var(--app-muted);
   font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 0;
 }
 
-/* ===== Cards ===== */
-.search-panel,
-.results-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  margin-bottom: 24px;
+.section-title {
+  font-size: 22px;
+  font-weight: 750;
+  margin-bottom: 8px;
 }
 
-/* ===== Toolbar ===== */
-.results-toolbar {
+.section-heading-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  align-items: flex-start;
+  gap: 16px;
 }
 
-.results-count {
-  font-size: 15px;
-  color: #475569;
+.app-card {
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  box-shadow: var(--app-shadow);
+  background: rgba(243, 231, 211, 0.94);
 }
 
-/* ===== Table ===== */
-.table {
-  margin-top: 10px;
+.app-card .card-body {
+  background: transparent;
 }
 
-.table thead th {
-  background: #1f2933;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
+@media (max-width: 991px) {
+  .page-hero.compact,
+  .section-heading-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
-.table tbody tr {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+@media (max-width: 575px) {
+  .page-subtitle,
+  .muted-text {
+    font-size: 15px;
+  }
 
-.table tbody tr:hover {
-  background: #eff6ff;
-  transform: scale(1.01);
-}
-
-/* ===== Pagination ===== */
-.pagination-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 24px;
-}
-
-.page-indicator {
-  padding: 8px 16px;
-  background: white;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  font-weight: 600;
-}
-
-/* ===== Rental Detail ===== */
-.rental-detail {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: white;
-  padding: 28px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
-
-.rental-detail a {
-  color: #2563eb;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.rental-detail h1 {
-  margin-top: 20px;
-  font-size: 30px;
-  color: #0f172a;
-}
-
-.rental-detail h2 {
-  margin-top: 24px;
-  color: #0f172a;
-}
-
-.rental-detail p {
-  line-height: 1.6;
-}
-
-/* ===== Description ===== */
-.description {
-  line-height: 1.7;
-  background: #f8fafc;
-  padding: 18px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-}
-
-/* ===== Map ===== */
-.map-container {
-  margin-top: 16px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
-}
-
-/* ===== Error ===== */
-.error {
-  color: #dc2626;
-  font-weight: 700;
+  .page-title {
+    font-size: 30px;
+  }
 }

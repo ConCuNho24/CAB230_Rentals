@@ -1,11 +1,9 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Outlet,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // components
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import { AuthProvider } from "./context/AuthProvider";
 
 // pages
 import Home from "./pages/Home";
@@ -15,32 +13,24 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import RatedRentals from "./pages/RatedRentals";
 
-function AppLayout() {
-  return (
-    <>
+const App = () => (
+  <AuthProvider>
+    <BrowserRouter>
       <Navbar />
       <main className="container py-4">
-        <Outlet />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/rentals" element={<RentalSearch />} />
+          <Route path="/rentals/:id" element={<RentalDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/rated" element={<RatedRentals />} />
+          </Route>
+        </Routes>
       </main>
-    </>
-  );
-}
+    </BrowserRouter>
+  </AuthProvider>
+);
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    Component: AppLayout,
-    children: [
-      { index: true, Component: Home },
-      { path: "rentals", Component: RentalSearch },
-      { path: "rentals/:id", Component: RentalDetail },
-      { path: "login", Component: Login },
-      { path: "register", Component: Register },
-      { path: "rated", Component: RatedRentals },
-    ],
-  },
-]);
-
-export default function App() {
-  return <RouterProvider router={router} />;
-}
+export default App;
