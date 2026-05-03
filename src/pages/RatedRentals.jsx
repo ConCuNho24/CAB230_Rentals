@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Alert, Badge, Card, Container, Table } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 import { getRentalById } from "../api/rentalsApi";
 import { getMyRatings } from "../api/ratingsApi";
-import PaginationControls from "../components/PaginationControls";
-import { ErrorMessage, LoadingMessage } from "../components/StatusMessage";
+import PageHeader from "../components/PageHeader";
 import {
-  formatDateTime,
-  formatMoney,
-  formatPropertyType,
-  formatUserRating,
-} from "../utils/formatters";
-import { getPageItems, PAGE_SIZE } from "./rentalSearch/searchHelpers";
+  RentalFactsCells,
+  RentalTitleCell,
+} from "../components/results/RentalTableCells";
+import { ratedRentalColumns } from "../components/results/resultColumns";
+import ResultsTable from "../components/results/ResultsTable";
+import { ErrorMessage } from "../components/StatusMessage";
+import { formatDateTime, formatUserRating } from "../utils/formatters";
 import "./RatedRentals.css";
 
 const RatedRentals = () => {
   const [ratings, setRatings] = useState([]);
   const [rentalsById, setRentalsById] = useState({});
-  const [pagination, setPagination] = useState({});
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
@@ -29,129 +32,121 @@ const RatedRentals = () => {
     ...rating,
     rental: rentalsById[rating.rentalId],
   }));
-  const lastPage = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
-  const currentPage = Math.min(page, lastPage);
-  const firstRowIndex = (currentPage - 1) * PAGE_SIZE;
-  const visibleRows = rows.slice(firstRowIndex, firstRowIndex + PAGE_SIZE);
-  const paginationItems = getPageItems(
-    currentPage,
-    lastPage,
-  );
+
+  const getRentalsByRatingIds = async (nextRatings) => {
+    const rentalIds = [
+      ...new Set(nextRatings.map((rating) => rating.rentalId)),
+    ];
+
+    const rentalResults = await Promise.all(
+      rentalIds.map(async (rentalId) => {
+        try {
+          const rental = await getRentalById(rentalId);
+          return [rentalId, rental];
+        } catch {
+          return [rentalId, null];
+        }
+      }),
+    );
+
+    return Object.fromEntries(rentalResults);
+  };
+
+  const loadRatedRentalsPage = async (page, appendResults = false) => {
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      const ratingResponse = await getMyRatings(page);
+      const nextRatings = ratingResponse.data || [];
+      const apiPagination = ratingResponse.pagination || {};
+      const nextRentalsById = await getRentalsByRatingIds(nextRatings);
+
+      setRatings((currentRatings) =>
+        appendResults ? [...currentRatings, ...nextRatings] : nextRatings,
+      );
+      setRentalsById((currentRentalsById) => ({
+        ...currentRentalsById,
+        ...nextRentalsById,
+      }));
+      setPagination({
+        currentPage: apiPagination.currentPage || page,
+        lastPage: apiPagination.lastPage || 1,
+        total: apiPagination.total || nextRatings.length,
+        prevPage: apiPagination.prevPage,
+        nextPage: apiPagination.nextPage,
+      });
+    } catch (err) {
+      if (!appendResults) {
+        setRatings([]);
+      }
+
+      setErrorMessage(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadRatedRentals = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage("");
-
-        const ratingResponse = await getMyRatings();
+    getMyRatings(1)
+      .then(async (ratingResponse) => {
         const nextRatings = ratingResponse.data || [];
+        const nextRentalsById = await getRentalsByRatingIds(nextRatings);
+        const apiPagination = ratingResponse.pagination || {};
+
         setRatings(nextRatings);
+        setRentalsById(nextRentalsById);
         setPagination({
-          total: nextRatings.length,
+          currentPage: apiPagination.currentPage || 1,
+          lastPage: apiPagination.lastPage || 1,
+          total: apiPagination.total || nextRatings.length,
+          prevPage: apiPagination.prevPage,
+          nextPage: apiPagination.nextPage,
         });
-
-        const rentalIds = [...new Set(nextRatings.map((rating) => rating.rentalId))];
-        const rentalResults = await Promise.all(
-          rentalIds.map(async (rentalId) => {
-            try {
-              const rental = await getRentalById(rentalId);
-              return [rentalId, rental];
-            } catch {
-              return [rentalId, null];
-            }
-          }),
-        );
-
-        setRentalsById(Object.fromEntries(rentalResults));
-      } catch (err) {
+      })
+      .catch((err) => {
+        setRatings([]);
         setErrorMessage(err.message);
-      } finally {
+      })
+      .finally(() => {
         setIsLoading(false);
-      }
-    };
-
-    loadRatedRentals();
+      });
   }, []);
 
-  const handlePageChange = (nextPage) => {
-    if (nextPage === currentPage || isLoading) return;
-    setPage(nextPage);
+  const handleLoadMore = () => {
+    if (!pagination.nextPage || isLoading) return;
+    loadRatedRentalsPage(pagination.nextPage, true);
   };
 
   return (
     <Container className="page-shell rated-rentals-page">
-      <div className="page-hero compact">
-        <div>
-          <h1 className="page-title">Rated Rentals</h1>
-          <p className="page-subtitle">
-            Review the properties you have rated while logged in.
-          </p>
-        </div>
-        <Badge bg="secondary">{rows.length || pagination.total || 0} total</Badge>
-      </div>
+      <PageHeader
+        title="Rated Rentals"
+        subtitle="Review the properties you have rated while logged in."
+        badgeText={`${pagination.total || rows.length || 0} total`}
+      />
 
-      <Card className="app-card">
-        <Card.Body>
-          <ErrorMessage message={errorMessage} />
-          {isLoading && <LoadingMessage message="Loading rated rentals..." />}
+      <ErrorMessage message={errorMessage} />
 
-          {!isLoading && !errorMessage && visibleRows.length === 0 && (
-            <Alert variant="info">You have not rated any rentals yet.</Alert>
-          )}
-
-          {!isLoading && visibleRows.length > 0 && (
-            <Table hover className="rentals-table align-middle">
-              <thead>
-                <tr>
-                  <th className="rental-title-column">Title</th>
-                  <th>Your Rating</th>
-                  <th>Rated</th>
-                  <th>Rent</th>
-                  <th>Type</th>
-                  <th>Suburb</th>
-                  <th>State</th>
-                  <th>Bed</th>
-                  <th>Bath</th>
-                  <th>Parking</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visibleRows.map(({ rental, rating, rentalId, dateTime }) => (
-                  <tr
-                    key={`${rentalId}-${dateTime}`}
-                    onClick={() => navigate(`/rentals/${rentalId}`)}
-                  >
-                    <td className="rental-title-column">
-                      {rental?.title || `Rental ${rentalId}`}
-                    </td>
-                    <td>{formatUserRating(rating)}</td>
-                    <td>{formatDateTime(dateTime)}</td>
-                    <td>{rental ? formatMoney(rental.rent) : "Unavailable"}</td>
-                    <td>
-                      {rental ? formatPropertyType(rental.propertyType) : "Unavailable"}
-                    </td>
-                    <td>{rental?.suburb || "Unavailable"}</td>
-                    <td>{rental?.state || "Unavailable"}</td>
-                    <td>{rental?.bedrooms ?? "Unavailable"}</td>
-                    <td>{rental?.bathrooms ?? "Unavailable"}</td>
-                    <td>{rental?.parkingSpaces ?? "Unavailable"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          )}
-        </Card.Body>
-      </Card>
-
-      <PaginationControls
-        currentPage={currentPage}
-        items={paginationItems}
+      <ResultsTable
+        columns={ratedRentalColumns}
+        emptyMessage="You have not rated any rentals yet."
+        errorMessage={errorMessage}
+        getRowKey={({ rentalId, dateTime }) => `${rentalId}-${dateTime}`}
+        hasNextPage={Boolean(pagination.nextPage)}
         isLoading={isLoading}
-        lastPage={lastPage}
-        nextPage={currentPage < lastPage ? currentPage + 1 : null}
-        onPageChange={handlePageChange}
-        prevPage={currentPage > 1 ? currentPage - 1 : null}
+        loadingMessage="Loading rated rentals..."
+        onLoadMore={handleLoadMore}
+        rows={rows}
+        total={pagination.total || rows.length || 0}
+        renderRow={({ rental, rating, rentalId, dateTime }) => (
+          <tr onClick={() => navigate(`/rentals/${rentalId}`)}>
+            <RentalTitleCell rental={rental} fallback={`Rental ${rentalId}`} />
+            <td className="rated-rating-column">{formatUserRating(rating)}</td>
+            <td className="rated-date-column">{formatDateTime(dateTime)}</td>
+            <RentalFactsCells rental={rental} />
+          </tr>
+        )}
       />
     </Container>
   );

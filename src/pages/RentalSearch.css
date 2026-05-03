@@ -23,8 +23,8 @@
 .search-panel .form-control:focus,
 .search-panel .form-select:focus {
   background-color: #fff8ea;
-  border-color: #0aaec4;
-  box-shadow: 0 0 0 4px rgba(10, 174, 196, 0.14);
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 4px var(--app-focus);
 }
 
 .search-panel .accordion-item {
@@ -41,7 +41,7 @@
 
 .search-panel .accordion-button:not(.collapsed) {
   background: #19353a;
-  color: #18c4d6;
+  color: #f18762;
 }
 
 .search-panel .accordion-button::after {

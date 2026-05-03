@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-import { Badge, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
+import PageHeader from "../components/PageHeader";
 import { ErrorMessage } from "../components/StatusMessage";
 import RentalSearchFilters from "./rentalSearch/RentalSearchFilters";
 import RentalSearchResults from "./rentalSearch/RentalSearchResults";
@@ -32,15 +33,11 @@ const RentalSearch = () => {
 
   return (
     <Container className="page-shell">
-      <div className="page-hero compact">
-        <div>
-          <h1 className="page-title">Rental Search</h1>
-          <p className="page-subtitle">
-            Search, sort and browse rentals from the full CAB230 API.
-          </p>
-        </div>
-        <Badge bg="secondary">{pagination.total || 0} matches</Badge>
-      </div>
+      <PageHeader
+        title="Rental Search"
+        subtitle="Search, sort and browse available rental properties."
+        badgeText={`${pagination.total || 0} matches`}
+      />
 
       <RentalSearchFilters
         filters={filters}

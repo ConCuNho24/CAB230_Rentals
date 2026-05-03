@@ -2,12 +2,10 @@
   margin-top: 0;
 }
 
-.rated-rentals-page .rentals-table th:nth-child(2),
-.rated-rentals-page .rentals-table td:nth-child(2) {
+.rated-rentals-page .rentals-table .rated-rating-column {
   width: 9%;
 }
 
-.rated-rentals-page .rentals-table th:nth-child(3),
-.rated-rentals-page .rentals-table td:nth-child(3) {
+.rated-rentals-page .rentals-table .rated-date-column {
   width: 12%;
 }

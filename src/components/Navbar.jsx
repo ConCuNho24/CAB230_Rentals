@@ -18,7 +18,8 @@ const Navbar = () => {
     <BSNavbar expand="lg" className="app-navbar">
       <Container>
         <BSNavbar.Brand as={Link} to="/" className="brand-logo">
-          <img src={logo} alt="Rental app logo" className="logo-img" />
+          <img src={logo} alt="RENFIN logo" className="logo-img" />
+          <span className="brand-name">RENFIN</span>
         </BSNavbar.Brand>
 
         <BSNavbar.Toggle aria-controls="main-navbar" />

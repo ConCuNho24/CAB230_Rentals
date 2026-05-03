@@ -1,4 +1,4 @@
-export const PAGE_SIZE = 10;
+export { PAGE_SIZE } from "../../components/results/resultsConfig";
 
 // One source of truth for all filter fields used by RentalSearch.
 const DEFAULT_FILTERS = {

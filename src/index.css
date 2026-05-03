@@ -4,7 +4,10 @@
   --app-border: #cbbba1;
   --app-text: #1e261f;
   --app-muted: #4f473b;
-  --app-primary: #0aaec4;
+  --app-primary: #c45332;
+  --app-primary-dark: #8f3824;
+  --app-primary-soft: #f2d7c9;
+  --app-focus: rgba(196, 83, 50, 0.18);
   --app-success: #0f766e;
   --app-warning: #b45309;
   --app-shadow: 0 10px 28px rgba(23, 32, 51, 0.08);
@@ -15,7 +18,7 @@ body {
   font-family: Inter, Arial, Helvetica, sans-serif;
   background:
     radial-gradient(circle at top left, rgba(240, 64, 48, 0.12), transparent 28rem),
-    radial-gradient(circle at top right, rgba(0, 176, 208, 0.15), transparent 30rem),
+    radial-gradient(circle at top right, rgba(196, 83, 50, 0.14), transparent 30rem),
     linear-gradient(180deg, #f8f0df 0%, #eef1e7 48%, #e8dfcf 100%);
   background-attachment: fixed;
   color: var(--app-text);
@@ -23,6 +26,33 @@ body {
 
 a {
   color: var(--app-primary);
+}
+
+a:hover,
+a:focus {
+  color: var(--app-primary-dark);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--app-primary);
+  --bs-btn-border-color: var(--app-primary);
+  --bs-btn-hover-bg: var(--app-primary-dark);
+  --bs-btn-hover-border-color: var(--app-primary-dark);
+  --bs-btn-active-bg: var(--app-primary-dark);
+  --bs-btn-active-border-color: var(--app-primary-dark);
+  --bs-btn-focus-shadow-rgb: 196, 83, 50;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--app-primary-dark);
+  --bs-btn-border-color: var(--app-primary);
+  --bs-btn-hover-color: #fff8ea;
+  --bs-btn-hover-bg: var(--app-primary);
+  --bs-btn-hover-border-color: var(--app-primary);
+  --bs-btn-active-color: #fff8ea;
+  --bs-btn-active-bg: var(--app-primary-dark);
+  --bs-btn-active-border-color: var(--app-primary-dark);
+  --bs-btn-focus-shadow-rgb: 196, 83, 50;
 }
 
 .page-shell {

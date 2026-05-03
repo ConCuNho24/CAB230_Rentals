@@ -31,7 +31,7 @@
 
 .rentals-table tbody tr:hover,
 .rentals-table tbody tr:hover td {
-  background: #d9f3f6;
+  background: var(--app-primary-soft);
 }
 
 .rentals-table tbody tr:nth-child(odd) td {

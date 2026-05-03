@@ -31,15 +31,15 @@
 .search-panel .property-filter-toggle.btn-outline-secondary:focus {
   color: #1e261f;
   background: #fff8ea;
-  border-color: #0aaec4;
-  box-shadow: 0 0 0 4px rgba(10, 174, 196, 0.14);
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 4px var(--app-focus);
 }
 
 .property-filter-menu {
   --bs-dropdown-bg: #f8efe0;
   --bs-dropdown-border-color: #c9b89b;
-  --bs-dropdown-link-hover-bg: #d9f3f6;
-  --bs-dropdown-link-active-bg: #d9f3f6;
+  --bs-dropdown-link-hover-bg: var(--app-primary-soft);
+  --bs-dropdown-link-active-bg: var(--app-primary-soft);
   width: 100%;
   max-height: 280px;
   overflow-y: auto;
@@ -71,7 +71,7 @@
 
 .property-filter-actions .btn-link:hover,
 .property-filter-actions .btn-link:focus {
-  color: #0aaec4;
+  color: var(--app-primary);
   text-decoration: underline;
 }
 
@@ -84,7 +84,7 @@
 }
 
 .property-filter-check:hover {
-  background: #d9f3f6;
+  background: var(--app-primary-soft);
 }
 
 .property-filter-check .form-check-input {
@@ -93,11 +93,11 @@
 }
 
 .property-filter-check .form-check-input:checked {
-  background-color: #0aaec4;
-  border-color: #0aaec4;
+  background-color: var(--app-primary);
+  border-color: var(--app-primary);
 }
 
 .property-filter-check .form-check-input:focus {
-  border-color: #0aaec4;
-  box-shadow: 0 0 0 4px rgba(10, 174, 196, 0.14);
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 4px var(--app-focus);
 }

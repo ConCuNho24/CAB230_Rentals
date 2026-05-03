@@ -18,7 +18,7 @@
 .app-navbar .navbar-nav .nav-link.show,
 .app-navbar .navbar-nav .nav-link:hover,
 .app-navbar .navbar-nav .nav-link:focus {
-  color: #18c4d6;
+  color: #f18762;
 }
 
 .app-navbar .navbar-toggler {
@@ -38,13 +38,21 @@
 .brand-logo {
   display: flex;
   align-items: center;
-  margin-right: 20px;
+  gap: 10px;
+  margin-right: 26px;
 }
 
 .logo-img {
   height: 62px;
-  max-width: 170px;
+  width: 62px;
   object-fit: contain;
+}
+
+.brand-name {
+  color: #f5e6bf;
+  font-size: 24px;
+  font-weight: 850;
+  letter-spacing: 0;
 }
 
 .app-navbar .btn-outline-light {
@@ -54,8 +62,8 @@
 
 .app-navbar .btn-outline-light:hover {
   color: #171915;
-  background: #00b0d0;
-  border-color: #00b0d0;
+  background: #f18762;
+  border-color: #f18762;
 }
 
 @media (max-width: 991px) {

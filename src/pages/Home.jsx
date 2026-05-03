@@ -6,19 +6,44 @@ import "./Home.css";
 
 const homeFeatures = [
   {
-    title: "Complete Rental Search",
+    title: "Find the Right Rental",
     description:
-      "Filter by state, suburb, postcode, property type, rent, bedrooms, bathrooms, parking and ratings.",
+      "Search by suburb, state, postcode, property type, rent range, bedrooms, bathrooms and parking.",
   },
   {
-    title: "Mapped Property Detail",
+    title: "Compare Property Details",
     description:
-      "Inspect location, agency, amenities, rating history and nearby rentals before opening a property link.",
+      "Review rent, amenities, agency details, rating history and nearby properties before you inspect.",
   },
   {
-    title: "Member Ratings",
+    title: "Save Your Impressions",
     description:
-      "Register, log in, rate rentals and return to the properties you have reviewed.",
+      "Create an account, rate homes you have viewed and revisit your rental shortlist anytime.",
+  },
+];
+
+const marketStats = [
+  ["6,700+", "rental listings"],
+  ["8", "states and territories"],
+  ["10", "results loaded at a time"],
+  ["Member", "ratings and shortlist history"],
+];
+
+const renterSteps = [
+  {
+    title: "Search your preferred area",
+    description:
+      "Start broad with state and suburb, then narrow results by budget, property type and household needs.",
+  },
+  {
+    title: "Compare real property signals",
+    description:
+      "Scan rent, bedrooms, bathrooms, parking, average rating and agency details before opening a listing.",
+  },
+  {
+    title: "Keep track as you inspect",
+    description:
+      "Rate homes after viewings and return to your reviewed rentals when it is time to make a decision.",
   },
 ];
 
@@ -33,12 +58,12 @@ const Home = () => (
       <section className="home-hero">
         <div className="home-hero-copy">
           <Badge bg="light" text="dark" className="mb-3">
-            Australian rental market 2026
+            Rentals across Australia
           </Badge>
-          <h1>Australian Rental Search</h1>
+          <h1>Find Your Next Rental Home</h1>
           <p>
-            Explore rental properties through the CAB230 REST API with routed
-            search, map views, authentication and ratings.
+            Browse available homes, compare key property details and keep track
+            of the rentals that feel right for your next move.
           </p>
           <div className="hero-actions">
             <Button as={Link} to="/rentals" size="lg">
@@ -63,6 +88,67 @@ const Home = () => (
           </Col>
         ))}
       </Row>
+
+      <section className="home-info-band">
+        <div className="home-section-heading">
+          <span>Rental search made practical</span>
+          <h2>Everything you need to shortlist with confidence</h2>
+        </div>
+
+        <Row className="g-3 home-stat-row">
+          {marketStats.map(([value, label]) => (
+            <Col lg={3} sm={6} key={label}>
+              <div className="home-stat">
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </section>
+
+      <section className="home-process-section">
+        <Row className="g-4 align-items-stretch">
+          <Col lg={5}>
+            <div className="home-process-copy">
+              <span>For renters</span>
+              <h2>Move from browsing to a clear shortlist</h2>
+              <p>
+                RENFIN is built around repeated rental decisions: quick filters,
+                readable comparison tables, detailed property pages and a review
+                history that stays with your account.
+              </p>
+              <Button as={Link} to="/rentals" variant="outline-light">
+                Start Searching
+              </Button>
+            </div>
+          </Col>
+
+          <Col lg={7}>
+            <div className="home-step-list">
+              {renterSteps.map((step, index) => (
+                <div className="home-step" key={step.title}>
+                  <span>{index + 1}</span>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Col>
+        </Row>
+      </section>
+
+      <section className="home-final-cta">
+        <div>
+          <span>Ready when you are</span>
+          <h2>Search, compare and rate your next rental home.</h2>
+        </div>
+        <Button as={Link} to="/rentals" size="lg">
+          Browse Rentals
+        </Button>
+      </section>
     </Container>
   </div>
 );

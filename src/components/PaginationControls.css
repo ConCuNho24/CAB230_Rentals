@@ -22,16 +22,16 @@
 
 .results-pagination .page-link:hover,
 .results-pagination .page-link:focus {
-  color: #151814;
-  background: #d9f3f6;
-  border-color: #0aaec4;
+  color: #fff8ea;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
   box-shadow: none;
 }
 
 .results-pagination .page-item.active .page-link {
-  color: #151814;
-  background: #18c4d6;
-  border-color: #18c4d6;
+  color: #fff8ea;
+  background: var(--app-primary-dark);
+  border-color: var(--app-primary-dark);
 }
 
 .results-pagination .page-item.disabled .page-link {
@@ -49,9 +49,9 @@
 
 .pagination-bar > .btn-outline-primary:hover,
 .pagination-bar > .btn-outline-primary:focus {
-  color: #151814;
-  background: #d9f3f6;
-  border-color: #0aaec4;
+  color: #fff8ea;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
   box-shadow: none;
 }
 
